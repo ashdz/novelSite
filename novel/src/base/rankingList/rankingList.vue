@@ -41,8 +41,8 @@
 		computed: {
 			descHeight () {
 				// console.log(this.$refs.coverImg)
-				const coverHeight = window.innerHeight;
-				const descHeight = coverHeight > 320 ? '32px' : '32px';
+				const coverWidth = window.innerWidth;
+				const descHeight = coverWidth > 320 ? '53px' : '32px';
 				return descHeight;
 			}
 		},

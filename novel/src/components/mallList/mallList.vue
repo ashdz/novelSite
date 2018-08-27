@@ -1,7 +1,7 @@
 <template>
 	<v-scroll v-if="data.length > 0" ref="scroll" :scrollY="scrollY" class="mall-wrapper">
-		<!-- <v-ranking :data="data" v-if="data.length > 0"></v-ranking> -->
-		<ul class="ranking-wrapper">
+		<v-ranking :data="data" v-if="data.length > 0"></v-ranking>
+		<!-- <ul class="ranking-wrapper">
 			<li v-for="item in data" :key="item.id">
 				<div class="cover">
 					<img :src="item.cover" alt="">
@@ -12,7 +12,7 @@
 					<p class="desc" :style="{height:descHeight}">{{item.descr}}</p>
 				</div>
 			</li>
-		</ul>
+		</ul> -->
 	</v-scroll>
 	<div v-else>没有数据</div>
 </template>
@@ -40,12 +40,12 @@
 			}
 		},
 		computed: {
-			descHeight () {
-				// console.log(this.$refs.coverImg)
-				const coverWeight = window.innerWeight;
-				const descHeight = coverWeight > 320 ? '53px' : '32px';
-				return descHeight;
-			}
+			// descHeight () {
+			// 	// console.log(this.$refs.coverImg)
+			// 	const coverWeight = window.innerWeight;
+			// 	const descHeight = coverWeight > 320 ? '53px' : '32px';
+			// 	return descHeight;
+			// }
 		},
 		components: {
 			'v-scroll': Scroll,
