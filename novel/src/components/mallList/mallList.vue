@@ -1,25 +1,16 @@
 <template>
 	<v-scroll v-if="data.length > 0" ref="scroll" :scrollY="scrollY" class="mall-wrapper">
 		<v-ranking :data="data" v-if="data.length > 0"></v-ranking>
-		<!-- <ul class="ranking-wrapper">
-			<li v-for="item in data" :key="item.id">
-				<div class="cover">
-					<img :src="item.cover" alt="">
-				</div>
-				<div class="text">
-					<h2 class="name">{{item.name}}</h2>
-					<span class="author">{{item.author}} | {{item.type}}</span>
-					<p class="desc" :style="{height:descHeight}">{{item.descr}}</p>
-				</div>
-			</li>
-		</ul> -->
 	</v-scroll>
-	<div v-else>没有数据</div>
+	<div v-else>
+		<v-loading></v-loading>
+	</div>
 </template>
 
 <script type="text/ecmascript-6">
 	import Scroll from '@/base/scroll/scroll';
 	import RankingList from '@/base/rankingList/rankingList';
+	import Loading from '@/base/loading/loading';
 
 	export default {
 		props: {
@@ -40,16 +31,12 @@
 			}
 		},
 		computed: {
-			// descHeight () {
-			// 	// console.log(this.$refs.coverImg)
-			// 	const coverWeight = window.innerWeight;
-			// 	const descHeight = coverWeight > 320 ? '53px' : '32px';
-			// 	return descHeight;
-			// }
+			
 		},
 		components: {
 			'v-scroll': Scroll,
-			'v-ranking': RankingList
+			'v-ranking': RankingList,
+			'v-loading': Loading
 		},
 		created () {
 
