@@ -29,7 +29,9 @@
 			return {
 				scrollY: true,
 				listenTouchend: true,
-				page: 1
+				page: 1,
+				pullUp: true,
+				pullDown: true
 			}
 		},
 		computed: {
@@ -56,11 +58,14 @@
 				const dY = currentUlHeight - containerHeight - Math.abs(pos.y);
 				
 				// 上拉加载
-				if (pos.y < 0 && dY < -50) {
+				if (this.pullUp && pos.y < 0 && dY < -50) {
+					this.pullUp = false;
+					this.pullDown = false;
 					this.page++;
 					// 下拉刷新
-				} else if (pos.y > 50) {
-					console.log('mmmmmmmmmm',pos,currentUlHeight,containerHeight);
+				} else if (this.pullDown && pos.y > 50) {
+					this.pullDown = false;
+					this.pullUp = false;
 					this.page = 1;
 					this.$parent.getNextRanking(this.page);
 				}
@@ -73,6 +78,8 @@
 			data () {
 				setTimeout(() => {
 					this.refresh();
+					this.pullDown = true;
+					this.pullUp = true;
 				},200);
 			}
 		}

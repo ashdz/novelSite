@@ -194,7 +194,9 @@
 		watch: {
 			currentTabIndex (newIndex) {
 				this._listWrapperSlide(newIndex);
-				
+				if (this.navList[newIndex - 1].data.length > 0) {
+					return;
+				}
 				this._getRankingList({
 					page: 1,
 					rankId: this.navList[newIndex - 1].rankId
