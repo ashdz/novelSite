@@ -1,5 +1,5 @@
 <template>
-	<v-scroll v-if="data.length > 0" ref="scroll" :scrollY="scrollY" class="mall-wrapper">
+	<v-scroll @touchend="touchendFn" v-if="data.length > 0" ref="scroll" :scrollY="scrollY" :listenTouchend="listenTouchend" class="mall-wrapper">
 		<v-ranking :data="data" v-if="data.length > 0"></v-ranking>
 	</v-scroll>
 	<div v-else>
@@ -27,7 +27,9 @@
 		},
 		data () {
 			return {
-				scrollY: true
+				scrollY: true,
+				listenTouchend: true,
+				page: 1
 			}
 		},
 		computed: {
@@ -47,6 +49,31 @@
 		methods: {
 			refresh () {
 				this.$refs.scroll && this.$refs.scroll.refresh();
+			},
+			touchendFn (pos) {
+				const currentUlHeight = this.$refs.scroll.$refs.scrollWrapper.childNodes[0].clientHeight;
+				const containerHeight = this.$refs.scroll.$refs.scrollWrapper.clientHeight;
+				const dY = currentUlHeight - containerHeight - Math.abs(pos.y);
+				
+				// 上拉加载
+				if (pos.y < 0 && dY < -50) {
+					this.page++;
+					// 下拉刷新
+				} else if (pos.y > 50) {
+					console.log('mmmmmmmmmm',pos,currentUlHeight,containerHeight);
+					this.page = 1;
+					this.$parent.getNextRanking(this.page);
+				}
+			}
+		},
+		watch: {
+			page (newPage) {
+				this.$parent.getNextRanking(newPage);
+			},
+			data () {
+				setTimeout(() => {
+					this.refresh();
+				},200);
 			}
 		}
 	}

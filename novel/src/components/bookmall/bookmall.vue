@@ -110,76 +110,86 @@
 		},
 		methods: {
 			change (item) {
-	      if (item !== undefined) {
-	        this.currentTabIndex = item.id
-	      }
-	      // 以下部分编写点击相应的navList item时，渲染的逻辑代码
-	      // this.$router.replace('/examples/nav-list/' + this.currentTabIndex + '/' + this.$i18n.locale)
-	    },
-	    mallTouchStart (e) {
-	    	const touch = e.touches[0];
-	    	this.percent = 0;
+		      if (item !== undefined) {
+		        this.currentTabIndex = item.id
+		      }
+		      // 以下部分编写点击相应的navList item时，渲染的逻辑代码
+		      // this.$router.replace('/examples/nav-list/' + this.currentTabIndex + '/' + this.$i18n.locale)
+		    },
+		    mallTouchStart (e) {
+		    	const touch = e.touches[0];
+		    	this.percent = 0;
 
-	    	this.touch.startX = touch.pageX;
-	    	this.touch.startY = touch.pageY;
-	    	this.touch.offsetWidth = - window.innerWidth * (this.currentTabIndex - 1);
-	    },
-	    mallTouchMove (e) {
-	    	let offsetWidth;
-	    	const touch = e.touches[0];
+		    	this.touch.startX = touch.pageX;
+		    	this.touch.startY = touch.pageY;
+		    	this.touch.offsetWidth = - window.innerWidth * (this.currentTabIndex - 1);
+		    },
+		    mallTouchMove (e) {
+		    	let offsetWidth;
+		    	const touch = e.touches[0];
 
-	    	this.touch.moveX = touch.pageX;
-	    	this.touch.moveY = touch.pageY;
+		    	this.touch.moveX = touch.pageX;
+		    	this.touch.moveY = touch.pageY;
 
-	    	const dealX = this.touch.moveX - this.touch.startX;
-	    	const dealY = this.touch.moveY - this.touch.startY;
+		    	const dealX = this.touch.moveX - this.touch.startX;
+		    	const dealY = this.touch.moveY - this.touch.startY;
 
-	    	if (Math.abs(dealY) > Math.abs(dealX)) {
-	    		return;
-	    	}
+		    	if (Math.abs(dealY) > Math.abs(dealX)) {
+		    		return;
+		    	}
 
-	    	if ((dealX > 0 && this.currentTabIndex === 1) || (dealX < 0 && this.currentTabIndex === (this.navList.length))) {
-	    		return;
-	    	}
+		    	if ((dealX > 0 && this.currentTabIndex === 1) || (dealX < 0 && this.currentTabIndex === (this.navList.length))) {
+		    		return;
+		    	}
 
-	    	this.percent = dealX / window.innerWidth;
-	    	offsetWidth = this.touch.offsetWidth + dealX;
+		    	this.percent = dealX / window.innerWidth;
+		    	offsetWidth = this.touch.offsetWidth + dealX;
 
-	    	this.$refs.listWrapper.style[transform] = `translate3d(${offsetWidth}px, 0, 0)`;
-	    	this.$refs.listWrapper.style[transitionDuration] = 0;
+		    	this.$refs.listWrapper.style[transform] = `translate3d(${offsetWidth}px, 0, 0)`;
+		    	this.$refs.listWrapper.style[transitionDuration] = 0;
 
-	    },
-	    mallTouchEnd () {
-	    	let time = 300;
-	    	if (Math.abs(this.percent) > 0.3) {
+		    },
+		    mallTouchEnd () {
+		    	let time = 300;
+		    	if (Math.abs(this.percent) > 0.3) {
 
-	    		if (this.percent > 0) {
-	    			this.currentTabIndex = this.currentTabIndex - 1;
-	    		} else {
-	    			this.currentTabIndex = this.currentTabIndex + 1;
+		    		if (this.percent > 0) {
+		    			this.currentTabIndex = this.currentTabIndex - 1;
+		    		} else {
+		    			this.currentTabIndex = this.currentTabIndex + 1;
+		    		}
+
+		    		// 调用子组件方法更改nav状态
+		    		this.$refs.navigator.parentAdjust(this.currentTabIndex);
+		    		return;
+		    	}
+		    	this._listWrapperSlide(this.currentTabIndex);
+		    },
+		    _listWrapperSlide (index) {
+		    	const width = window.innerWidth;
+		    	const offsetWidth = - width * (index - 1);
+		    	const time = 300;
+
+		    	this.$refs.listWrapper.style[transform] = `translate3d(${offsetWidth}px, 0, 0)`;
+		    	this.$refs.listWrapper.style[transitionDuration] = `${time}ms`;
+		    },
+		    _getRankingList (params) {
+		    	if(params.page <= 1) {
+	    			this.navList[this.currentTabIndex - 1].data = [];
 	    		}
-
-	    		// 调用子组件方法更改nav状态
-	    		this.$refs.navigator.parentAdjust(this.currentTabIndex);
-	    		return;
-	    	}
-	    	this._listWrapperSlide(this.currentTabIndex);
-	    },
-	    _listWrapperSlide (index) {
-	    	const width = window.innerWidth;
-	    	const offsetWidth = - width * (index - 1);
-	    	const time = 300;
-
-	    	this.$refs.listWrapper.style[transform] = `translate3d(${offsetWidth}px, 0, 0)`;
-	    	this.$refs.listWrapper.style[transitionDuration] = `${time}ms`;
-	    },
-	    _getRankingList (params) {
-	    	getRankingList(params).then((response) => {
-	    		this.navList[this.currentTabIndex - 1].data = response.list;
-	    	}).catch((error) => {
-	    		console.log('getRankingList error');
-	    	});
-	    }
+		    	getRankingList(params).then((response) => {
+		    		this.navList[this.currentTabIndex - 1].data = this.navList[this.currentTabIndex - 1].data.concat(response.list);
+		    	}).catch((error) => {
+		    		console.log('getRankingList error');
+		    	});
+		    },
+		    // 获取指定页码的数据（用于上拉加载更多或下拉刷新）
+		    getNextRanking (page) {
+		    	this._getRankingList({
+					page: page,
+					rankId: this.navList[this.currentTabIndex - 1].rankId
+				});
+		    }
 		},
 		watch: {
 			currentTabIndex (newIndex) {

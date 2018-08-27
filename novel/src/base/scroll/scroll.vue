@@ -16,6 +16,10 @@
 			scrollY: {
 				type: Boolean,
 				default: false
+			},
+			listenTouchend: {
+				type: Boolean,
+				default: false
 			}
 		},
 		data () {
@@ -42,20 +46,30 @@
 		methods: {
 			scrollTo () {
 				// apply方法this.scroll替换母函数this，arguments传参，数组类型，为一个参数列表
-      	this.scroll && this.scroll.scrollTo.apply(this.scroll, arguments);
+      			this.scroll && this.scroll.scrollTo.apply(this.scroll, arguments);
 			},
-	    refresh () {
-	      this.scroll && this.scroll.refresh();
-	    },
+		    refresh () {
+		      this.scroll && this.scroll.refresh();
+		    },
 			_initBScroll () {
 				if (!this.$refs.scrollWrapper) {
-		      return;
-		    }
+			      return;
+			    }
 				this.scroll = new BScroll(this.$refs.scrollWrapper, {
 					click: true,
 					scrollY: this.scrollY,
 					scrollX: this.scrollX
 				});
+				this.touchEnd();
+			},
+			touchEnd () {
+				if (this.scroll && this.listenTouchend) {
+					let self = this;
+			        this.scroll.on('touchEnd', (pos) => {
+			          // $emit派发一个touchend事件
+			          self.$emit('touchend', pos);
+			        });
+				}
 			}
 		},
 	  watch: {
