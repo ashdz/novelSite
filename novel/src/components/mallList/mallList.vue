@@ -1,6 +1,6 @@
 <template>
 	<v-scroll @touchend="touchendFn" v-if="data.length > 0" ref="scroll" :scrollY="scrollY" :listenTouchend="listenTouchend" class="mall-wrapper">
-		<v-ranking :data="data" v-if="data.length > 0"></v-ranking>
+		<v-ranking @select="selectBook" :data="data" v-if="data.length > 0"></v-ranking>
 	</v-scroll>
 	<div v-else>
 		<v-loading></v-loading>
@@ -69,7 +69,15 @@
 					this.page = 1;
 					this.$parent.getNextRanking(this.page);
 				}
-			}
+			},
+		    // 选择书籍查看
+		    selectBook (book) {
+		    	this.$parent.book = book;
+		    	// 缺少书籍简介的接口，因而通过这里传些数据进行拼凑
+		    	this.$router.push({
+		    		path: `/bookmall/bkey=${book.bkey}&desc=${book.descr}`
+		    	})
+		    }
 		},
 		watch: {
 			page (newPage) {
@@ -80,7 +88,7 @@
 					this.refresh();
 					this.pullDown = true;
 					this.pullUp = true;
-				},200);
+				},300);
 			}
 		}
 	}

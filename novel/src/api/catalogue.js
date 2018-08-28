@@ -1,14 +1,15 @@
 import {queryStringParameters} from './config';
 import axios from 'axios';
 
-// 排行榜
-export function getRankingList (params) {
-	const url = 'proxyApi/rank';
+// 书本介绍
+export function getCatalogue (params) {
+	const url = 'catalogueApi/detail';
 
 	const data = Object.assign({}, queryStringParameters, {
-		pn: params.page,
-		rankId: params.rankId,
-		gf: 'ebye-d1-prank-i',
+		bkey: params.bkey,
+		p: params.p,
+		asc: 'asc',
+		gf: 'ebye-d1-pdetail-i',
 	});
 
 	return axios.get(url, {

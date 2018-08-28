@@ -1,6 +1,6 @@
 <template>
 	<ul class="ranking-wrapper">
-		<li v-for="item in data" :key="item.id">
+		<li @click="selectItem(item)" v-for="item in data" :key="item.id">
 			<div class="cover">
 				<img :src="item.cover" alt="">
 			</div>
@@ -25,7 +25,7 @@
 		},
 		data () {
 			return {
-
+				
 			}
 		},
 		created () {
@@ -38,6 +38,11 @@
 				
 			});
 		},
+		methods: {
+			selectItem (item) {
+				this.$emit('select', item);
+			}
+		},
 		computed: {
 			descHeight () {
 				// console.log(this.$refs.coverImg)
@@ -47,7 +52,7 @@
 			}
 		},
 		watch: {
-
+			
 		}
 	}
 </script>

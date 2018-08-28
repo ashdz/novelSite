@@ -18,7 +18,7 @@
 				<v-mallList ref="mallList" class="list" v-for="list in navList" :key="list.id" :navListName="list.name" :data="list.data"></v-mallList>
 			</div>
 		</div>
-		
+		<router-view></router-view>
 	</div>
 </template>
 
@@ -81,7 +81,8 @@
 					}
 				],
 				currentTabIndex: 1,
-				percent: 0
+				percent: 0,
+				book: []
 			}
 		},
 		computed: {
@@ -248,6 +249,7 @@
 			position absolute
 			top 80px
 			bottom 50px
+			overflow hidden
 		.list-wrapper
 			display flex
 			height 100%

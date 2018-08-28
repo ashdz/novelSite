@@ -17,6 +17,13 @@ module.exports = {
         pathRewrite: {
           '^/proxyApi': '/h5/ajax'
         }
+      },
+      '/catalogueApi': {
+        target: 'https://yd.sogou.com',
+        changeOrigin: true,
+        pathRewrite: {
+          '^/catalogueApi': '/h5/cpt/ajax'
+        }
       }
     },
     // Various Dev Server settings
