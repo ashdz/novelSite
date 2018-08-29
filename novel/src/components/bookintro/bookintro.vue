@@ -2,7 +2,11 @@
 	<transition name="slide">
 		<div class="bookintro-wrapper">
 			<header class="header-wrapper">
-				<div class="top-nav"></div>
+				<div class="top-nav">
+					<div class="nav-content">
+						<span @click="back" class="back"></span>
+					</div>
+				</div>
 				<div class="header-content">
 					<div class="book-cover">
 						<img v-if="bookintro.coverUrl" :src="bookintro.coverUrl" alt="">
@@ -100,6 +104,9 @@
 
 		},
 		methods: {
+			back () {
+				this.$router.go(-1);
+			},
 			orderWay () {
 				if (this.order.mode === 'asc') {
 					this.book.mode = this.order.mode = 'desc';
@@ -197,6 +204,31 @@
 			left 0
 			width 100%
 			background-color transparent
+			.nav-content
+				text-align center
+				font-size 18px
+				position relative
+				height 44px
+				line-height 44px
+				.back
+					position absolute
+					left 0
+					top 0
+					bottom 0
+					width 40px
+					&:after
+						display block
+						content ''
+						width 13px
+						height 13px
+						position absolute
+						top 0
+						bottom 0
+						left 18px
+						margin auto
+						border-top 1px solid #fff
+						border-left 1px solid #fff
+						transform rotate(-45deg)
 		.header-content
 			position relative
 			display flex
