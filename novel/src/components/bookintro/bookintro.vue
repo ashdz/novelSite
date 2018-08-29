@@ -23,7 +23,7 @@
 			</div>
 			<div class="catalogue">
 				<div class="catalogue-title">
-					<strong>目录</strong>共{{catalogue.total}}章<span class="sort">{{order.text}}</span>
+					<strong>目录</strong>共{{catalogue.total}}章<span class="sort" @click="orderWay">{{order.text}}</span>
 				</div>
 				<div class="catalogue-detail">
 					<div class="new">
@@ -40,15 +40,15 @@
 						</li>
 					</ul>
 					<div class="page">
-						<span>首页</span>
-						<span>上一页</span>
+						<span :class="{noclick : currentPage === 1 }" @click="firstPage">首页</span>
+						<span :class="{noclick : currentPage === 1 }" @click="prePage">上一页</span>
 						<div class="select">
-							<select name="" id="">
-								<option v-for="item in catalogue.totalPages" value="item">{{item === catalogue.curPage ? `${catalogue.curPage}/${catalogue.totalPages}` : item}}</option>
+							<select v-model="currentPage">
+								<option v-for="item in catalogue.totalPages" :key="item.id" :value="item">{{item === currentPage ? `${currentPage}/${catalogue.totalPages}` : item}}</option>
 							</select>
 						</div>
-						<span>下一页</span>
-						<span>尾页</span>
+						<span :class="{noclick : currentPage === catalogue.totalPages }" @click="nextPage">下一页</span>
+						<span :class="{noclick : currentPage === catalogue.totalPages }" @click="lastPage">尾页</span>
 					</div>
 				</div>
 			</div>
@@ -71,7 +71,8 @@
 				order:{
 					mode: 'asc',	//asc:顺序;desc:倒序
 					text: '倒序'
-				}
+				},
+				currentPage: 1
 			}
 		},
 		filters: {
@@ -88,8 +89,9 @@
 
 		},
 		created () {
-			this.book.p = 1;
+			this.book.p = this.currentPage;
 			this.book.bkey = getValue('bkey');
+			this.book.mode = this.order.mode
 			this._getCatalogue(this.book);
 			// 解码
 			this.desc = decodeURIComponent(getValue('desc'));
@@ -98,6 +100,40 @@
 
 		},
 		methods: {
+			orderWay () {
+				if (this.order.mode === 'asc') {
+					this.book.mode = this.order.mode = 'desc';
+					this.order.text = '顺序';
+
+				}else{
+					this.book.mode = this.order.mode = 'asc';
+					this.order.text = '倒序';
+				}
+			},
+			firstPage () {
+				if (this.currentPage === 1) {
+					return;
+				}
+				this.currentPage = 1;
+			},
+			lastPage () {
+				if (this.currentPage === this.catalogue.totalPages) {
+					return;
+				}
+				this.currentPage = this.catalogue.totalPages;
+			},
+			prePage () {
+				if (this.currentPage === 1) {
+					return;
+				}
+				this.currentPage--;
+			},
+			nextPage () {
+				if (this.currentPage === this.catalogue.totalPages) {
+					return;
+				}
+				this.currentPage++;
+			},
 			_getCatalogue (params) {
 				getCatalogue(params).then((response) => {
 					if (response.status === 'succ') {
@@ -122,6 +158,15 @@
 				}).catch((error) => {
 					console.log('getBookIntro error');
 				});
+			}
+		},
+		watch: {
+			currentPage (newCurrentPage) {
+				this.book.p = this.currentPage;
+				this._getCatalogue(this.book);
+			},
+			'order.mode': function () {
+				this._getCatalogue(this.book);
 			}
 		}
 	}
@@ -299,6 +344,8 @@
 					position relative
 					display block
 					flex 1
+				span.noclick
+					color #999
 				.select
 					flex 2
 					select

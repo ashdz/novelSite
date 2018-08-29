@@ -8,7 +8,7 @@ export function getCatalogue (params) {
 	const data = Object.assign({}, queryStringParameters, {
 		bkey: params.bkey,
 		p: params.p,
-		asc: 'asc',
+		asc: params.mode,
 		gf: 'ebye-d1-pdetail-i',
 	});
 
